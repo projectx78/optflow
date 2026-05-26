@@ -16,7 +16,8 @@ const TIMEFRAMES = [
 ];
 const EXPIRY_OPTIONS = ["0DTE","1DTE","2DTE","Weekly","Monthly"];
 const TABS = ["analyze","strategy","chain","pnl","backtest","alerts","admin"];
-const TAB_LABELS = { analyze:"📈", strategy:"🎯", chain:"⛓", pnl:"💰", backtest:"📊", alerts:"🔔", admin:"⚙️" };
+const TAB_ICONS  = { analyze:"📈", strategy:"🎯", chain:"⛓", pnl:"💰", backtest:"📊", alerts:"🔔", admin:"⚙️" };
+const TAB_LABELS = { analyze:"Analyze", strategy:"Strategy", chain:"OC", pnl:"P&L", backtest:"Backtest", alerts:"Alerts", admin:"Admin" };
 
 const toBase64 = (file) => new Promise((res, rej) => {
   const r = new FileReader();
@@ -369,7 +370,18 @@ Strategy rules: Bullish>60% confidence→Bull Call Spread; Bearish>60%→Bear Pu
         <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
           <div style={{ display:"flex", gap:2 }}>
             {visibleTabs.map(t => (
-              <button key={t} onClick={()=>setTab(t)} style={{ background:tab===t?"#111":"transparent", border:`1px solid ${tab===t?"#222":"transparent"}`, borderRadius:6, padding:"4px 10px", color:tab===t?"#fff":"#444", fontSize:16, cursor:"pointer", transition:"all .15s" }}>{TAB_LABELS[t]}</button>
+              <button key={t} onClick={()=>setTab(t)} style={{
+                background: tab===t ? "#111" : "transparent",
+                border: `1px solid ${tab===t ? "#333" : "transparent"}`,
+                borderRadius: 8, padding: "6px 10px",
+                color: tab===t ? "#fff" : "#444",
+                cursor: "pointer", transition: "all .15s",
+                display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
+                minWidth: 48,
+              }}>
+                <span style={{ fontSize: 20 }}>{TAB_ICONS[t]}</span>
+                <span style={{ fontSize: 9, letterSpacing: 0.5, fontWeight: tab===t ? 700 : 400, color: tab===t ? "#aaa" : "#333" }}>{TAB_LABELS[t]}</span>
+              </button>
             ))}
           </div>
           <div style={{ display:"flex", alignItems:"center", gap:6, marginLeft:6 }}>
