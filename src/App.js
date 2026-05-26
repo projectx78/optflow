@@ -17,7 +17,7 @@ const TIMEFRAMES = [
 const EXPIRY_OPTIONS = ["0DTE","1DTE","2DTE","Weekly","Monthly"];
 const TABS = ["analyze","strategy","chain","pnl","backtest","alerts","admin"];
 const TAB_ICONS  = { analyze:"📈", strategy:"🎯", chain:"⛓", pnl:"💰", backtest:"📊", alerts:"🔔", admin:"⚙️" };
-const TAB_LABELS = { analyze:"Analyze", strategy:"Strategy", chain:"OC", pnl:"P&L", backtest:"Backtest", alerts:"Alerts", admin:"Admin" };
+const TAB_LABELS = { analyze:"Analyze", strategy:"Strategy", chain:"Option Chain", pnl:"P&L", backtest:"Backtest", alerts:"Alerts", admin:"Admin" };
 
 const toBase64 = (file) => new Promise((res, rej) => {
   const r = new FileReader();
@@ -380,13 +380,19 @@ Strategy rules: Bullish>60% confidence→Bull Call Spread; Bearish>60%→Bear Pu
                 minWidth: 48,
               }}>
                 <span style={{ fontSize: 20 }}>{TAB_ICONS[t]}</span>
-                <span style={{ fontSize: 9, letterSpacing: 0.5, fontWeight: tab===t ? 700 : 400, color: tab===t ? "#aaa" : "#333" }}>{TAB_LABELS[t]}</span>
+                <span style={{ fontSize: 9, letterSpacing: 0.5, fontWeight: tab===t ? 700 : 400, color: tab===t ? "#fff" : "#888" }}>{TAB_LABELS[t]}</span>
               </button>
             ))}
           </div>
-          <div style={{ display:"flex", alignItems:"center", gap:6, marginLeft:6 }}>
-            <span style={{ fontSize:10, color:"#333" }}>{profile?.email}</span>
-            <span style={{ fontSize:9, color:isAdmin?COLORS.bull:isPro?COLORS.neutral:"#555", background:(isAdmin?COLORS.bull:isPro?COLORS.neutral:"#555")+"18", border:`1px solid ${(isAdmin?COLORS.bull:isPro?COLORS.neutral:"#555")}33`, borderRadius:4, padding:"2px 7px" }}>{profile?.plan?.toUpperCase()}</span>
+          <div style={{ display:"flex", alignItems:"center", gap:8, marginLeft:8, borderLeft:"1px solid #1a1a1a", paddingLeft:12 }}>
+            <span style={{ fontSize:12, color:"#ccc", fontWeight:500 }}>{profile?.email}</span>
+            <span style={{
+              fontSize:10, fontWeight:700, letterSpacing:1,
+              color: isAdmin ? COLORS.bull : isPro ? COLORS.neutral : "#aaa",
+              background: (isAdmin ? COLORS.bull : isPro ? COLORS.neutral : "#555") + "22",
+              border: `1px solid ${(isAdmin ? COLORS.bull : isPro ? COLORS.neutral : "#555")}55`,
+              borderRadius:5, padding:"3px 9px"
+            }}>{profile?.plan?.toUpperCase()}</span>
             <Btn onClick={signOut} variant="ghost" small>SIGN OUT</Btn>
           </div>
         </div>
