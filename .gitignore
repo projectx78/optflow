@@ -1,0 +1,17 @@
+# dependencies
+node_modules/
+
+# production build
+build/
+
+# env files - never commit secrets
+.env
+.env.local
+.env.*.local
+
+# vercel
+.vercel
+
+# misc
+.DS_Store
+*.zip
