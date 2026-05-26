@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
-import { supabase } from "../lib/supabase";
+import { apiFetch } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { COLORS, SL, Pill, Card, Btn, Spinner, fmt, fmtP } from "../components/UI";
 
@@ -31,13 +31,13 @@ export default function BacktestPage() {
 
   const loadSignals = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase.from("signals").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(200);
+    const { signals: data } = await apiFetch("/api/signals/list");
     setSignals(data || []);
     setLoading(false);
   }, [user]);
 
   const loadSaved = useCallback(async () => {
-    const { data } = await supabase.from("backtests").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(10);
+    const { backtests: data } = await apiFetch("/api/backtests/list");
     setSaved(data || []);
   }, [user]);
 
@@ -71,8 +71,7 @@ export default function BacktestPage() {
     if (withCum.length > 0) {
       const wins   = withCum.filter(r => r.sim_result === "WIN").length;
       const losses = withCum.filter(r => r.sim_result === "LOSS").length;
-      const { data: bt } = await supabase.from("backtests").insert({
-        user_id: user.id,
+      await apiFetch("/api/backtests/save", { method: "POST", body: {
         symbol: filters.symbol,
         strategy_type: filters.strategy,
         total_signals: withCum.length,
@@ -83,8 +82,8 @@ export default function BacktestPage() {
         results_json: withCum.slice(0, 50),
         date_from: withCum[withCum.length - 1]?.created_at?.split("T")[0],
         date_to:   withCum[0]?.created_at?.split("T")[0],
-      }).select().single();
-      if (bt) loadSaved();
+      }});
+      loadSaved();
     }
     setRunning(false);
   };

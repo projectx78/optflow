@@ -1,44 +1,47 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
+import { apiFetch, setToken, clearToken, getToken } from "../lib/api";
 
 const AuthContext = createContext({});
 
 export function AuthProvider({ children }) {
-  const [user, setUser]       = useState(null);
+  const [user,    setUser]    = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async (uid) => {
-    const { data } = await supabase.from("profiles").select("*").eq("id", uid).single();
-    setProfile(data);
-  };
-
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      if (session?.user) fetchProfile(session.user.id);
-      setLoading(false);
-    });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) fetchProfile(session.user.id);
-      else setProfile(null);
-    });
-    return () => subscription.unsubscribe();
+    if (!getToken()) { setLoading(false); return; }
+    apiFetch("/api/auth/me")
+      .then(({ user }) => { setUser(user); setProfile(user); })
+      .catch(() => clearToken())
+      .finally(() => setLoading(false));
   }, []);
 
-  const signUp = (email, password, full_name) =>
-    supabase.auth.signUp({ email, password, options: { data: { full_name } } });
+  const signUp = async (email, password, full_name) => {
+    const { token, user } = await apiFetch("/api/auth/signup", {
+      method: "POST", body: { email, password, full_name },
+    });
+    setToken(token); setUser(user); setProfile(user);
+    return { data: { user }, error: null };
+  };
 
-  const signIn = (email, password) =>
-    supabase.auth.signInWithPassword({ email, password });
+  const signIn = async (email, password) => {
+    const { token, user } = await apiFetch("/api/auth/signin", {
+      method: "POST", body: { email, password },
+    });
+    setToken(token); setUser(user); setProfile(user);
+    return { data: { user }, error: null };
+  };
 
-  const signOut = () => supabase.auth.signOut();
+  const signOut = () => {
+    clearToken(); setUser(null); setProfile(null);
+  };
 
   const updateProfile = async (updates) => {
-    const { data } = await supabase.from("profiles").update(updates).eq("id", user.id).select().single();
-    setProfile(data);
-    return data;
+    const { user } = await apiFetch("/api/auth/update-profile", {
+      method: "PATCH", body: updates,
+    });
+    setProfile(user);
+    return user;
   };
 
   return (

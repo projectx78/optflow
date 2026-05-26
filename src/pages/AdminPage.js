@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { supabase } from "../lib/supabase";
+import { apiFetch } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { COLORS, SL, Pill, Card, Btn, Spinner } from "../components/UI";
 
@@ -11,7 +11,7 @@ export default function AdminPage() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { data: u } = await supabase.from("admin_overview").select("*").order("created_at", { ascending: false });
+    const { users: u } = await apiFetch("/api/admin/users");
     setUsers(u || []);
     // aggregate stats
     if (u) {
@@ -24,7 +24,7 @@ export default function AdminPage() {
   useEffect(() => { if (profile?.plan === "admin") load(); }, [profile, load]);
 
   const upgradePlan = async (id, plan) => {
-    await supabase.from("profiles").update({ plan }).eq("id", id);
+    await apiFetch("/api/admin/update-plan", { method: "PATCH", body: { id, plan } });
     setUsers(prev => prev.map(u => u.id === id ? { ...u, plan } : u));
   };
 

@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { supabase } from "./lib/supabase";
+import { apiFetch } from "./lib/api";
 import { useAuth } from "./context/AuthContext";
 import { COLORS, SL, Pill, Card, Btn, Spinner, fmt, fmtC } from "./components/UI";
 import PnLPage      from "./pages/PnLPage";
@@ -329,20 +329,19 @@ Strategy rules: Bullish>60% confidence→Bull Call Spread; Bearish>60%→Bear Pu
 
       setSignal(parsed.signal); setStrategy(parsed.strategy);
 
-      // ── save signal to Supabase ──
-      const { data: saved } = await supabase.from("signals").insert({
-        user_id: user.id, symbol, expiry,
+      // ── save signal to DB ──
+      const { id: savedId } = await apiFetch("/api/signals/save", { method: "POST", body: {
+        symbol, expiry,
         direction: parsed.signal.direction, confidence: parsed.signal.confidence,
         strategy_type: parsed.strategy?.type,
         signal_json: parsed.signal, strategy_json: parsed.strategy,
         pcr, spot,
-      }).select().single();
+      }}).catch(() => ({}));
 
       // ── fire alert if confidence high enough ──
       if (profile?.alerts_enabled && parsed.signal.confidence >= (profile.alert_min_confidence||75)) {
         const alertMsg = `📊 OPTIONS SIGNAL\n\nSymbol: ${symbol}\nDirection: ${parsed.signal.direction==="CALL"?"▲ CALL":"▼ PUT"}\nConfidence: ${parsed.signal.confidence}%\nStrategy: ${parsed.strategy?.type||"—"}\nExpiry: ${expiry}\n\n${parsed.signal.rationale?.substring(0,120)}…\n\n⚠️ Not financial advice. Manage your risk.`;
         await fetch("/api/alerts/send", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ whatsapp:profile.whatsapp, phone:profile.phone, message:alertMsg }) });
-        if (saved) await supabase.from("alert_log").insert({ user_id:user.id, signal_id:saved.id, channel:"whatsapp", message:alertMsg });
       }
 
     } catch(e) {

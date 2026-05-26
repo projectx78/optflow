@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, BarChart, Bar, Cell } from "recharts";
-import { supabase } from "../lib/supabase";
+import { apiFetch } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { COLORS, SL, Pill, Card, Btn, Spinner, fmt, fmtP } from "../components/UI";
 
@@ -61,7 +61,7 @@ export default function PnLPage() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase.from("trades").select("*").eq("user_id", user.id).order("created_at", { ascending: false });
+    const { trades: data } = await apiFetch("/api/trades/list");
     setTrades(data || []);
     setLoading(false);
   }, [user]);
@@ -70,7 +70,6 @@ export default function PnLPage() {
 
   const saveTrade = async (form) => {
     const entry = {
-      user_id: user.id,
       symbol: form.symbol, strategy_type: form.strategy_type, direction: form.direction,
       entry_price: parseFloat(form.entry_price) || null,
       exit_price:  parseFloat(form.exit_price)  || null,
@@ -79,13 +78,13 @@ export default function PnLPage() {
       premium_received: parseFloat(form.premium_received) || null,
       result: form.result, notes: form.notes,
     };
-    await supabase.from("trades").insert(entry);
+    await apiFetch("/api/trades/save", { method: "POST", body: entry });
     setShowForm(false);
     load();
   };
 
   const updateResult = async (id, result) => {
-    await supabase.from("trades").update({ result }).eq("id", id);
+    await apiFetch("/api/trades/update", { method: "PATCH", body: { id, result } });
     setTrades(prev => prev.map(t => t.id === id ? { ...t, result } : t));
   };
 
