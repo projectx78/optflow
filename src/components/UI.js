@@ -8,19 +8,19 @@ export const COLORS = {
   bg:      "#030303",
   card:    "#080808",
   border:  "#1a1a1a",
-  text:    "#d0d0d0",
-  muted:   "#444",
+  text:    "#e8e8e8",
+  muted:   "#999",
 };
 
 export function SL({ children }) {
-  return <div style={{ fontSize: 9, color: "#444", letterSpacing: 2, marginBottom: 8, fontWeight: 700 }}>{children}</div>;
+  return <div style={{ fontSize: 10, color: "#aaa", letterSpacing: 2, marginBottom: 8, fontWeight: 700 }}>{children}</div>;
 }
 
 export function Pill({ label, value, color = "#888" }) {
   return (
     <div style={{ background: color + "18", border: `1px solid ${color}44`, borderRadius: 6, padding: "4px 10px", fontSize: 10, textAlign: "center", minWidth: 68 }}>
-      <div style={{ color: "#444", marginBottom: 2 }}>{label}</div>
-      <div style={{ color, fontWeight: 700, fontSize: 13 }}>{value}</div>
+      <div style={{ color: "#aaa", marginBottom: 2, fontSize: 10 }}>{label}</div>
+      <div style={{ color, fontWeight: 700, fontSize: 14 }}>{value}</div>
     </div>
   );
 }
@@ -61,7 +61,7 @@ export function Spinner({ msg }) {
       {[0,1,2].map(i => (
         <div key={i} style={{ width: 7, height: 7, borderRadius: "50%", background: COLORS.bull, animation: `pulse 1.2s ease-in-out ${i*0.2}s infinite` }} />
       ))}
-      {msg && <span style={{ color: "#444", fontSize: 11, marginLeft: 8 }}>{msg}</span>}
+      {msg && <span style={{ color: "#aaa", fontSize: 12, marginLeft: 8 }}>{msg}</span>}
       <style>{`@keyframes pulse{0%,100%{transform:scale(.6);opacity:.3}50%{transform:scale(1);opacity:1}}`}</style>
     </div>
   );
