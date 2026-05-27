@@ -64,7 +64,7 @@ function PinPad({ onDigit, onDelete }) {
 export default function AuthPage() {
   const { signIn, signUp } = useAuth();
   const mobile = isNative();
-  const PIN_LEN = 6;
+  const PIN_LEN = 4;
 
   const [mode,    setMode]    = useState("login");
   const [form,    setForm]    = useState({ email: "", password: "", full_name: "", pin: "" });
