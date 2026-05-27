@@ -3,11 +3,7 @@
   "appName": "Options Signal",
   "webDir": "build",
   "server": {
-    "androidScheme": "https"
-  },
-  "plugins": {
-    "CapacitorHttp": {
-      "enabled": true
-    }
+    "url": "https://optflow-bice.vercel.app",
+    "cleartext": false
   }
 }
