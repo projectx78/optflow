@@ -1,0 +1,13 @@
+{
+  "appId": "com.optflow.app",
+  "appName": "Options Signal",
+  "webDir": "build",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}
