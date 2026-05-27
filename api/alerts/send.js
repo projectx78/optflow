@@ -1,7 +1,8 @@
 // api/alerts/send.js — Twilio WhatsApp + SMS alert
 // Env vars needed: TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE
+import { withCors } from "../_db.js";
 
-export default async function handler(req, res) {
+export default withCors(async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const { whatsapp, phone, message } = req.body;
@@ -40,4 +41,4 @@ export default async function handler(req, res) {
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
-}
+});

@@ -1,6 +1,6 @@
-import { getPool, verifyToken } from "../_db.js";
+import { getPool, verifyToken, withCors } from "../_db.js";
 
-export default async function handler(req, res) {
+export default withCors(async function handler(req, res) {
   if (req.method !== "PATCH") return res.status(405).json({ error: "Method not allowed" });
   try {
     const { id: user_id } = verifyToken(req);
@@ -15,4 +15,4 @@ export default async function handler(req, res) {
   } catch (e) {
     return res.status(401).json({ error: "Unauthorized" });
   }
-}
+});

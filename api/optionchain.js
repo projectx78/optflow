@@ -48,7 +48,9 @@ async function getSession() {
   return merged;
 }
 
-export default async function handler(req, res) {
+import { withCors } from "./_db.js";
+
+export default withCors(async function handler(req, res) {
   if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
 
   const symbol = req.query.symbol === "BANKNIFTY" ? "BANKNIFTY" : "NIFTY";
@@ -86,4 +88,4 @@ export default async function handler(req, res) {
     console.error("OC proxy error:", err.message);
     return res.status(500).json({ error: err.message });
   }
-}
+});

@@ -28,3 +28,13 @@ export function verifyToken(req) {
   if (!auth.startsWith("Bearer ")) throw new Error("No token");
   return jwt.verify(auth.slice(7), SECRET);
 }
+
+export function withCors(handler) {
+  return async (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    if (req.method === "OPTIONS") return res.status(200).end();
+    return handler(req, res);
+  };
+}
